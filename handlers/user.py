@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from config import MOVIES_CHANNEL_ID
-from database import get_channels, get_movie
+from database import get_channels, get_movie, add_user
 
 router = Router()
 
@@ -37,6 +37,7 @@ def subscribe_keyboard(channels: list) -> InlineKeyboardMarkup:
 
 @router.message(CommandStart())
 async def start_handler(message: types.Message, bot: Bot):
+    await add_user(message.from_user.id)
     args = message.text.split()
     if len(args) > 1:
         await handle_movie_request(message, bot, args[1])
@@ -56,6 +57,7 @@ async def movie_code_handler(message: types.Message, bot: Bot):
 
 async def handle_movie_request(message: types.Message, bot: Bot, code: str):
     user_id = message.from_user.id
+    await add_user(user_id)
     not_subscribed = await check_subscriptions(bot, user_id)
     if not_subscribed:
         await message.answer(
