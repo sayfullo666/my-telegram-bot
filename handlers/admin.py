@@ -7,7 +7,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 from config import ADMIN_ID, MOVIES_CHANNEL_ID
 from database import (
     get_channels, add_channel, remove_channel,
-    add_movie, delete_movie, get_all_movies, get_movie
+    add_movie, delete_movie, get_all_movies, get_movie,
+    get_user_count
 )
 
 router = Router()
@@ -270,8 +271,10 @@ async def statistics(message: types.Message):
         return
     movies = await get_all_movies()
     channels = await get_channels()
+    users_count = await get_user_count()
     await message.answer(
         f"📊 *Statistika:*\n\n"
+        f"👤 Foydalanuvchilar: *{users_count} ta*\n"
         f"🎬 Filmlar: *{len(movies)} ta*\n"
         f"📢 Kanallar: *{len(channels)} ta*",
         parse_mode="Markdown"
