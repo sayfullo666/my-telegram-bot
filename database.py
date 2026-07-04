@@ -24,6 +24,12 @@ async def init_db():
             message_id INTEGER NOT NULL
         )
     """)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            user_id BIGINT PRIMARY KEY,
+            joined_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
     await conn.close()
 
 async def get_channels():
@@ -69,3 +75,19 @@ async def get_all_movies():
     rows = await conn.fetch("SELECT * FROM movies ORDER BY id DESC")
     await conn.close()
     return rows
+
+
+async def add_user(user_id: int):
+    conn = await asyncpg.connect(DB_URL)
+    await conn.execute(
+        "INSERT INTO users (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING",
+        user_id
+    )
+    await conn.close()
+
+
+async def get_user_count():
+    conn = await asyncpg.connect(DB_URL)
+    count = await conn.fetchval("SELECT COUNT(*) FROM users")
+    await conn.close()
+    return count
