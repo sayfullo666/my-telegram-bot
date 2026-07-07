@@ -1,0 +1,5 @@
+pyTelegramBotAPI==4.23.0
+flask
+requests
+gunicorn
+psycopg2-binary
