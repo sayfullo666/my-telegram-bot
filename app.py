@@ -254,11 +254,11 @@ def admin_state_text_handler(message):
 @bot.message_handler(
     func=lambda m: is_admin(m.from_user.id)
     and admin_state.get(m.from_user.id, {}).get("step") == "add_video",
-    content_types=["video"],
+    content_types=["video", "document"],
 )
 def admin_add_movie_video(message):
     state = admin_state.get(message.from_user.id)
-    file_id = message.video.file_id
+    file_id = message.video.file_id if message.video else message.document.file_id
     data = state["data"]
     ok = db.add_movie(data["code"], data["title"], data["description"], file_id)
     reset_admin_state(message.from_user.id)
